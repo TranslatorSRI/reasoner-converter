@@ -1,5 +1,8 @@
 # Reasoner Converter
 
+[![github actions](https://github.com/translatorsri/reasoner-converter/workflows/tests/badge.svg)](https://github.com/TranslatorSRI/reasoner-converter/actions?query=workflow%3Atests)
+[![codecov](https://codecov.io/gh/TranslatorSRI/reasoner-converter/branch/main/graph/badge.svg?token=tVG6HrqIvD)](https://codecov.io/gh/TranslatorSRI/reasoner-converter)
+
 Reasoner Converter provides conversion between TRAPI versions [0.9.2](https://github.com/NCATSTranslator/ReasonerAPI/tree/v0.9.2) and [1.0.0](https://github.com/NCATSTranslator/ReasonerAPI/tree/v1.0.0-beta).
 
 Jump to:
