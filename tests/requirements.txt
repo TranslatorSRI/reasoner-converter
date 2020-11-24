@@ -1,0 +1,5 @@
+httpx
+jsonschema
+pytest
+pytest-cov
+pyyaml
