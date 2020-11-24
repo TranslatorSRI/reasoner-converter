@@ -3,3 +3,4 @@ jsonschema
 pytest
 pytest-cov
 pyyaml
+-e .
