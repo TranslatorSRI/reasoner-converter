@@ -6,7 +6,7 @@ Jump to:
 
 * [Python API](#python-api)
 * [backwards compatibility](#backwards-compatibility)
-* [0.9.2 → 1.0.0 changes](#092-→-100-changes)
+* [0.9.2 → 1.0.0 changes](#092--100-changes)
 
 ---
 
