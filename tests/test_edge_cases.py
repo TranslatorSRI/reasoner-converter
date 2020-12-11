@@ -32,6 +32,33 @@ def test_092_edge_type_curie():
         "object": "HGNC:4897",
     }
 
+def test_no_edge_type():
+    """Test upgrading a 0.9.2 edge without a type."""
+    kedge0 = {
+        "id": "xxx",
+        "source_id": "MONDO:0005737",
+        "target_id": "HGNC:4897",
+    }
+    kedge1 = upgrade_Edge(kedge0)
+    assert kedge1 == {
+        "subject": "MONDO:0005737",
+        "object": "HGNC:4897",
+    }
+
+def test_none_edge_type():
+    """Test upgrading a 0.9.2 edge without an edge that has type:None."""
+    kedge0 = {
+        "id": "xxx",
+        "type": None,
+        "source_id": "MONDO:0005737",
+        "target_id": "HGNC:4897",
+    }
+    kedge1 = upgrade_Edge(kedge0)
+    assert kedge1 == {
+        "predicate": None,
+        "subject": "MONDO:0005737",
+        "object": "HGNC:4897",
+    }
 
 def test_100_qnode_category_list():
     """Test downgrading a 1.0.0 qnode category that's a list."""
