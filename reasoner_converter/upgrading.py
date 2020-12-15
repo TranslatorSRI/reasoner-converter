@@ -13,6 +13,8 @@ def upgrade_BiolinkEntity(biolink_entity):
 
 def upgrade_BiolinkRelation(biolink_relation):
     """Upgrade BiolinkRelation from 0.9.2 to 1.0.0."""
+    if biolink_relation is None:
+        return None
     if biolink_relation.startswith("biolink:"):
         return biolink_relation
     return "biolink:" + snake_case(biolink_relation)
@@ -33,12 +35,13 @@ def upgrade_Node(node):
 
 def upgrade_Edge(edge):
     """Upgrade Edge from 0.9.2 to 1.0.0."""
-    return {
-        "predicate": upgrade_BiolinkRelation(edge["type"]),
+    newedge = {
         "subject": edge["source_id"],
         "object": edge["target_id"],
     }
-
+    if 'type' in edge:
+        newedge["predicate"] = upgrade_BiolinkRelation(edge["type"])
+    return newedge
 
 def upgrade_KnowledgeGraph(kgraph):
     """Upgrade KnowledgeGraph from 0.9.2 to 1.0.0."""
