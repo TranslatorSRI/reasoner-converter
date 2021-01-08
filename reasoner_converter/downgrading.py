@@ -25,7 +25,7 @@ def downgrade_Node(node, id_):
         new = {
             **new,
             **{
-                attribute.get("name", f"{idx:05d}"): attribute["value"]
+                attribute.get("name", f"attribute{idx:02d}"): attribute["value"]
                 for idx, attribute in enumerate(node["attributes"])
             }
         }
@@ -47,7 +47,7 @@ def downgrade_Edge(edge, id_):
         new = {
             **new,
             **{
-                attribute.get("name", f"{idx:05d}"): attribute["value"]
+                attribute.get("name", f"attribute{idx:02d}"): attribute["value"]
                 for idx, attribute in enumerate(edge.get("attributes", []))
             }
         }

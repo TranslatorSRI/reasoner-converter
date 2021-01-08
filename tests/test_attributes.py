@@ -39,3 +39,43 @@ def test_edge_attributes():
     validate1(x1, "Edge")
     x0b = downgrade_Edge(x1, x0a["id"])
     assert x0a == x0b
+
+
+def test_downgrade_node_nameless():
+    """Test downgrading name-less node attribute."""
+    x1 = {
+        "attributes": [
+            {
+                "type": "EDAM:data_0006",
+                "value": 0,
+            }
+        ]
+    }
+    validate1(x1, "Node")
+    x0 = downgrade_Node(x1, "XXX:YYY")
+    assert x0 == {
+        "id": "XXX:YYY",
+        "attribute00": 0,
+    }
+
+
+def test_downgrade_edge_nameless():
+    """Test downgrading name-less edge attribute."""
+    x1 = {
+        "subject": "XXX:YYY",
+        "object": "XXX:ZZZ",
+        "attributes": [
+            {
+                "type": "EDAM:data_0006",
+                "value": 0,
+            }
+        ]
+    }
+    validate1(x1, "Edge")
+    x0 = downgrade_Edge(x1, "xxx")
+    assert x0 == {
+        "id": "xxx",
+        "source_id": "XXX:YYY",
+        "target_id": "XXX:ZZZ",
+        "attribute00": 0,
+    }
