@@ -6,6 +6,45 @@ import jsonschema
 import yaml
 from yaml import Loader
 
+
+def fix_nullable(schema):
+    """Replace nullable: true with json schema-compliant alternative."""
+    if "$ref" in schema:
+        return schema
+    if "oneOf" in schema:
+        if schema.pop("nullable", False):
+            schema["oneOf"].append({"type": "null"})
+    elif "allOf" in schema:
+        if schema.pop("nullable", False):
+            if len(schema["allOf"]) == 1:
+                schema["oneOf"] = [
+                    schema.pop("allOf")[0],
+                    {"type": "null"},
+                ]
+            else:
+                schema["oneOf"] = [
+                    schema.pop("allOf"),
+                    {"type": "null"},
+                ]
+    elif "type" in schema:
+        if schema["type"] == "object":
+            if "properties" in schema:
+                schema["properties"] = {
+                    pname: fix_nullable(property)
+                    for pname, property in schema["properties"].items()
+                }
+            if "additionalProperties" in schema and isinstance(schema["additionalProperties"], dict):
+                schema["additionalProperties"] = fix_nullable(schema["additionalProperties"])
+        if schema.pop("nullable", False):
+            schema = {
+                "oneOf": [
+                    schema,
+                    {"type": "null"}
+                ]
+            }
+    return schema
+
+
 response = httpx.get("https://raw.githubusercontent.com/NCATSTranslator/ReasonerAPI/v0.9.2/API/TranslatorReasonersAPI.yaml")
 response.raise_for_status()
 schema0 = response.text
@@ -19,6 +58,10 @@ components0 = spec['components']['schemas']
 
 spec = yaml.load(schema1, Loader=Loader)
 components1 = spec['components']['schemas']
+components1 = {
+    cname: fix_nullable(component)
+    for cname, component in components1.items()
+}
 
 
 def validate0(obj, component_name):
