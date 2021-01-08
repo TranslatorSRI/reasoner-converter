@@ -1,8 +1,10 @@
 """Test edge cases."""
 import pytest
 
-from reasoner_converter.upgrading import upgrade_Node, upgrade_Edge
+from reasoner_converter.upgrading import upgrade_Message, upgrade_Node, upgrade_Edge
 from reasoner_converter.downgrading import downgrade_QNode, downgrade_QEdge
+
+from .util.validators import validate0, validate1
 
 
 def test_092_node_type_curie():
@@ -100,3 +102,11 @@ def test_100_qedge_predicate_list():
     }
     with pytest.raises(ValueError):
         qedge0 = downgrade_QEdge(qedge1, "n0")
+
+
+def test_missing_message_props():
+    """Test missing Message properties."""
+    x0 = {}
+    validate0(x0, "Message")
+    x1 = upgrade_Message(x0)
+    validate1(x1, "Message")

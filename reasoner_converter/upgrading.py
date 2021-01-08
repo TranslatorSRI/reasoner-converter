@@ -180,14 +180,17 @@ def upgrade_Result(result):
 
 def upgrade_Message(message):
     """Upgrade Message from 0.9.2 to 1.0.0."""
-    return {
-        "query_graph": upgrade_QueryGraph(message["query_graph"]),
-        "knowledge_graph": upgrade_KnowledgeGraph(message["knowledge_graph"]),
-        "results": [
+    new = dict()
+    if "query_graph" in message:
+        new["query_graph"] = upgrade_QueryGraph(message["query_graph"])
+    if "knowledge_graph" in message:
+        new["knowledge_graph"] = upgrade_KnowledgeGraph(message["knowledge_graph"])
+    if "results" in message:
+        new["results"] = [
             upgrade_Result(result)
             for result in message["results"]
-        ],
-    }
+        ]
+    return new
 
 
 def upgrade_Query(query):
