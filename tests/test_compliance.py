@@ -1,14 +1,4 @@
 """Test compliance of converted results with TRAPI specifications."""
-import copy
-
-import httpx
-import jsonschema
-import yaml
-try:
-    from yaml import CLoader as Loader
-except ImportError:
-    from yaml import Loader
-
 from reasoner_converter.upgrading import (
     upgrade_BiolinkEntity, upgrade_BiolinkRelation,
     upgrade_Node, upgrade_Edge, upgrade_KnowledgeGraph,
