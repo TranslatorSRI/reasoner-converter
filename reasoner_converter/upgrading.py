@@ -195,6 +195,8 @@ def upgrade_Message(message):
 
 def upgrade_Query(query):
     """Upgrade Query from 0.9.2 to 1.0.0."""
+    query = {**query}
     return {
-        "message": upgrade_Message(query["message"]),
+        "message": upgrade_Message(query.pop("message")),
+        **query,
     }
