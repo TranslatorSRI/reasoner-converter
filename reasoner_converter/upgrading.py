@@ -155,7 +155,7 @@ def upgrade_EdgeBinding(edge_binding):
             "id": kg_id,
         }
         for key, value in edge_binding.items():
-            if key == "qg_id":
+            if key in ("qg_id", "kg_id"):
                 continue
             new[key] = value
         yield new

@@ -4,6 +4,7 @@ import pytest
 from reasoner_converter.upgrading import (
     upgrade_Query, upgrade_Message,
     upgrade_Node, upgrade_Edge,
+    upgrade_Result,
 )
 from reasoner_converter.downgrading import (
     downgrade_Query,
@@ -131,3 +132,35 @@ def test_addl_query_props():
     validate1(x1, "Query")
     x0b = downgrade_Query(x1)
     assert x0a == x0b
+
+
+def test_addl_binding_props():
+    """Test additional Node/EdgeBinding properties."""
+    x0 = {
+        "node_bindings": [{
+            "qg_id": "n0",
+            "kg_id": "XXX:YYY",
+            "a": 1,
+        }],
+        "edge_bindings": [{
+            "qg_id": "e01",
+            "kg_id": "xxx",
+            "b": 2,
+        }],
+    }
+    validate0(x0, "Result")
+    x1 = upgrade_Result(x0)
+    assert x1 == {
+        "node_bindings": {
+            "n0": [{
+                "id": "XXX:YYY",
+                "a": 1,
+            }],
+        },
+        "edge_bindings": {
+            "e01": [{
+                "id": "xxx",
+                "b": 2,
+            }],
+        }
+    }
