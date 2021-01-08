@@ -6,9 +6,9 @@ def downgrade_BiolinkEntity(biolink_entity):
     return snake_case(biolink_entity[8:])
 
 
-def downgrade_BiolinkRelation(biolink_relation):
-    """Downgrade BiolinkRelation from 1.0.0 to 0.9.2."""
-    return biolink_relation[8:]
+def downgrade_BiolinkPredicate(biolink_predicate):
+    """Downgrade BiolinkPredicate (1.0.0) to BiolinkRelation (0.9.2)."""
+    return biolink_predicate[8:]
 
 
 def downgrade_Node(node, id_):
@@ -32,7 +32,7 @@ def downgrade_Edge(edge, id_):
         "target_id": edge["object"],
     }
     if edge.get("predicate", None) is not None:
-        new["type"] = downgrade_BiolinkRelation(edge["predicate"])
+        new["type"] = downgrade_BiolinkPredicate(edge["predicate"])
     if edge.get("relation", None) is not None:
         new["relation"] = edge["relation"]
     return new
@@ -78,9 +78,9 @@ def downgrade_QEdge(qedge, id_):
         if isinstance(qedge["predicate"], list):
             if len(qedge["predicate"]) > 1:
                 raise ValueError("QEdge with multiple predicates is not backwards-compatible")
-            new["type"] = downgrade_BiolinkRelation(qedge["predicate"][0])
+            new["type"] = downgrade_BiolinkPredicate(qedge["predicate"][0])
         else:
-            new["type"] = downgrade_BiolinkRelation(qedge["predicate"])
+            new["type"] = downgrade_BiolinkPredicate(qedge["predicate"])
     if qedge.get("relation", None) is not None:
         new["relation"] = qedge["relation"]
     return new

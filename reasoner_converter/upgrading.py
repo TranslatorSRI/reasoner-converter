@@ -12,7 +12,7 @@ def upgrade_BiolinkEntity(biolink_entity):
 
 
 def upgrade_BiolinkRelation(biolink_relation):
-    """Upgrade BiolinkRelation from 0.9.2 to 1.0.0."""
+    """Upgrade BiolinkRelation (0.9.2) to BiolinkPredicate (1.0.0)."""
     if biolink_relation is None:
         return None
     if biolink_relation.startswith("biolink:"):
@@ -39,7 +39,7 @@ def upgrade_Edge(edge):
         "subject": edge["source_id"],
         "object": edge["target_id"],
     }
-    if 'type' in edge:
+    if "type" in edge:
         newedge["predicate"] = upgrade_BiolinkRelation(edge["type"])
     return newedge
 

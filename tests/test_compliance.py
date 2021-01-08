@@ -17,7 +17,7 @@ from reasoner_converter.upgrading import (
     upgrade_Message, upgrade_Query,
 )
 from reasoner_converter.downgrading import (
-    downgrade_BiolinkEntity, downgrade_BiolinkRelation,
+    downgrade_BiolinkEntity, downgrade_BiolinkPredicate,
     downgrade_Node, downgrade_Edge, downgrade_KnowledgeGraph,
     downgrade_QNode, downgrade_QEdge, downgrade_QueryGraph,
     downgrade_NodeBinding, downgrade_EdgeBinding, downgrade_Result,
@@ -42,8 +42,8 @@ def test_biolink_relation():
     brel0 = "related_to"
     validate0(brel0, "BiolinkRelation")
     brel1 = upgrade_BiolinkRelation(brel0)
-    validate1(brel1, "BiolinkRelation")
-    brel0b = downgrade_BiolinkRelation(brel1)
+    validate1(brel1, "BiolinkPredicate")
+    brel0b = downgrade_BiolinkPredicate(brel1)
     assert brel0 == brel0b
 
 

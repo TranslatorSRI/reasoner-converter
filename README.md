@@ -79,7 +79,7 @@ The following are required to downgrade 1.0.0 → 0.9.2:
 ### QEdge
 
 * `.type` → `.predicate`
-* `.predicate` is: a `BiolinkRelation` → a `BiolinkRelation` or an array of `BiolinkRelation`s
+* `.predicate` is: a `BiolinkRelation` → a `BiolinkPredicate` or an array of `BiolinkPredicate`s
 * `.source_id` → `.subject`
 * `.target_id` → `.object`
 
@@ -102,6 +102,6 @@ The following are required to downgrade 1.0.0 → 0.9.2:
 
 * string → "biolink:PascalCase"
 
-### BiolinkRelation
+### Biolink~~Relation~~Predicate
 
 * string → "biolink:snake_case"
