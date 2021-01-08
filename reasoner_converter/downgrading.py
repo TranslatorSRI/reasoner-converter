@@ -21,6 +21,14 @@ def downgrade_Node(node, id_):
         ]
     if node.get("name", None) is not None:
         new["name"] = node["name"]
+    if node.get("attributes", None) is not None:
+        new = {
+            **new,
+            **{
+                attribute.get("name", f"{idx:05d}"): attribute["value"]
+                for idx, attribute in enumerate(node["attributes"])
+            }
+        }
     return new
 
 
@@ -35,6 +43,14 @@ def downgrade_Edge(edge, id_):
         new["type"] = downgrade_BiolinkPredicate(edge["predicate"])
     if edge.get("relation", None) is not None:
         new["relation"] = edge["relation"]
+    if edge.get("attributes", None) is not None:
+        new = {
+            **new,
+            **{
+                attribute.get("name", f"{idx:05d}"): attribute["value"]
+                for idx, attribute in enumerate(edge.get("attributes", []))
+            }
+        }
     return new
 
 

@@ -22,27 +22,51 @@ def upgrade_BiolinkRelation(biolink_relation):
 
 def upgrade_Node(node):
     """Upgrade Node from 0.9.2 to 1.0.0."""
+    node = {**node}
+    node.pop("id")
     new = dict()
     if "type" in node:
         new["category"] = [
             upgrade_BiolinkEntity(node_type)  # node.type is a list[str]
-            for node_type in node["type"]
+            for node_type in node.pop("type")
         ]
     if "name" in node:
-        new["name"] = node["name"]
+        new["name"] = node.pop("name")
+    if node:
+        # add remaining properties as attributes
+        new["attributes"] = [
+            {
+                "name": key,
+                "type": "EDAM:data_0006",  # "data"
+                "value": value,
+            }
+            for key, value in node.items()
+        ]
     return new
 
 
 def upgrade_Edge(edge):
     """Upgrade Edge from 0.9.2 to 1.0.0."""
+    edge = {**edge}
+    edge.pop("id")
     new = {
-        "subject": edge["source_id"],
-        "object": edge["target_id"],
+        "subject": edge.pop("source_id"),
+        "object": edge.pop("target_id"),
     }
     if "type" in edge:
-        new["predicate"] = upgrade_BiolinkRelation(edge["type"])
+        new["predicate"] = upgrade_BiolinkRelation(edge.pop("type"))
     if "relation" in edge:
-        new["relation"] = edge["relation"]
+        new["relation"] = edge.pop("relation")
+    if edge:
+        # add remaining properties as attributes
+        new["attributes"] = [
+            {
+                "name": key,
+                "type": "EDAM:data_0006",  # "data"
+                "value": value,
+            }
+            for key, value in edge.items()
+        ]
     return new
 
 
@@ -62,24 +86,38 @@ def upgrade_KnowledgeGraph(kgraph):
 
 def upgrade_QNode(qnode):
     """Upgrade QNode from 0.9.2 to 1.0.0."""
+    qnode = {**qnode}
+    qnode.pop("id")
     new = dict()
     if "type" in qnode:
-        new["category"] = upgrade_BiolinkEntity(qnode["type"])
+        new["category"] = upgrade_BiolinkEntity(qnode.pop("type"))
     if "curie" in qnode:
-        new["id"] = qnode["curie"]
+        new["id"] = qnode.pop("curie")
+    # add remaining properties verbatim
+    new = {
+        **new,
+        **qnode,
+    }
     return new
 
 
 def upgrade_QEdge(qedge):
     """Upgrade QEdge from 0.9.2 to 1.0.0."""
+    qedge = {**qedge}
+    qedge.pop("id")
     new = {
-        "subject": qedge["source_id"],
-        "object": qedge["target_id"],
+        "subject": qedge.pop("source_id"),
+        "object": qedge.pop("target_id"),
     }
     if "type" in qedge:
-        new["predicate"] = upgrade_BiolinkRelation(qedge["type"])
+        new["predicate"] = upgrade_BiolinkRelation(qedge.pop("type"))
     if "relation" in qedge:
-        new["relation"] = qedge["relation"]
+        new["relation"] = qedge.pop("relation")
+    # add remaining properties verbatim
+    new = {
+        **new,
+        **qedge,
+    }
     return new
 
 
