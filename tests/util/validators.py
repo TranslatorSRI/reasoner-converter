@@ -4,7 +4,10 @@ import copy
 import httpx
 import jsonschema
 import yaml
-from yaml import Loader
+try:
+    from yaml import CLoader as Loader
+except ImportError:
+    from yaml import Loader
 
 
 def fix_nullable(schema):
