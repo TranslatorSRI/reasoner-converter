@@ -35,13 +35,16 @@ def upgrade_Node(node):
 
 def upgrade_Edge(edge):
     """Upgrade Edge from 0.9.2 to 1.0.0."""
-    newedge = {
+    new = {
         "subject": edge["source_id"],
         "object": edge["target_id"],
     }
     if "type" in edge:
-        newedge["predicate"] = upgrade_BiolinkRelation(edge["type"])
-    return newedge
+        new["predicate"] = upgrade_BiolinkRelation(edge["type"])
+    if "relation" in edge:
+        new["relation"] = edge["relation"]
+    return new
+
 
 def upgrade_KnowledgeGraph(kgraph):
     """Upgrade KnowledgeGraph from 0.9.2 to 1.0.0."""
@@ -75,6 +78,8 @@ def upgrade_QEdge(qedge):
     }
     if "type" in qedge:
         new["predicate"] = upgrade_BiolinkRelation(qedge["type"])
+    if "relation" in qedge:
+        new["relation"] = qedge["relation"]
     return new
 
 

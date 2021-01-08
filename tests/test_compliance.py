@@ -68,6 +68,7 @@ def test_kedge():
         "type": "related_to",
         "source_id": "yyy:123",
         "target_id": "zzz:456",
+        "relation": "abc",
     }
     validate0(kedge0, "Edge")
     kedge1 = upgrade_Edge(kedge0)
@@ -122,6 +123,7 @@ def test_qedge():
         "type": "related_to",
         "source_id": "n0",
         "target_id": "n1",
+        "relation": "abc",
     }
     validate0(qedge0, "QEdge")
     qedge1 = upgrade_QEdge(qedge0)
