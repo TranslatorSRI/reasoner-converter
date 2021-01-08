@@ -17,45 +17,14 @@ from reasoner_converter.upgrading import (
     upgrade_Message, upgrade_Query,
 )
 from reasoner_converter.downgrading import (
-    downgrade_BiolinkEntity, downgrade_BiolinkRelation,
+    downgrade_BiolinkEntity, downgrade_BiolinkPredicate,
     downgrade_Node, downgrade_Edge, downgrade_KnowledgeGraph,
     downgrade_QNode, downgrade_QEdge, downgrade_QueryGraph,
     downgrade_NodeBinding, downgrade_EdgeBinding, downgrade_Result,
     downgrade_Message, downgrade_Query,
 )
 
-response = httpx.get("https://raw.githubusercontent.com/NCATSTranslator/ReasonerAPI/v0.9.2/API/TranslatorReasonersAPI.yaml")
-response.raise_for_status()
-schema0 = response.text
-
-response = httpx.get("https://raw.githubusercontent.com/NCATSTranslator/ReasonerAPI/v1.0.0-beta/TranslatorReasonerAPI.yaml")
-response.raise_for_status()
-schema1 = response.text
-
-spec = yaml.load(schema0, Loader=Loader)
-components0 = spec['components']['schemas']
-
-spec = yaml.load(schema1, Loader=Loader)
-components1 = spec['components']['schemas']
-
-def validate1(obj, component_name):
-    """Validate object against schema."""
-    # build json schema against which we validate
-    other_components = copy.deepcopy(components1)
-    schema = other_components.pop(component_name)
-    schema['components'] = {'schemas': other_components}
-
-    jsonschema.validate(obj, schema)
-
-
-def validate0(obj, component_name):
-    """Validate object against schema."""
-    # build json schema against which we validate
-    other_components = copy.deepcopy(components0)
-    schema = other_components.pop(component_name)
-    schema['components'] = {'schemas': other_components}
-
-    jsonschema.validate(obj, schema)
+from .util.validators import validate0, validate1
 
 
 def test_biolink_entity():
@@ -73,8 +42,8 @@ def test_biolink_relation():
     brel0 = "related_to"
     validate0(brel0, "BiolinkRelation")
     brel1 = upgrade_BiolinkRelation(brel0)
-    validate1(brel1, "BiolinkRelation")
-    brel0b = downgrade_BiolinkRelation(brel1)
+    validate1(brel1, "BiolinkPredicate")
+    brel0b = downgrade_BiolinkPredicate(brel1)
     assert brel0 == brel0b
 
 
@@ -99,6 +68,7 @@ def test_kedge():
         "type": "related_to",
         "source_id": "yyy:123",
         "target_id": "zzz:456",
+        "relation": "abc",
     }
     validate0(kedge0, "Edge")
     kedge1 = upgrade_Edge(kedge0)
@@ -153,6 +123,7 @@ def test_qedge():
         "type": "related_to",
         "source_id": "n0",
         "target_id": "n1",
+        "relation": "abc",
     }
     validate0(qedge0, "QEdge")
     qedge1 = upgrade_QEdge(qedge0)

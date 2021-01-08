@@ -6,32 +6,36 @@ def downgrade_BiolinkEntity(biolink_entity):
     return snake_case(biolink_entity[8:])
 
 
-def downgrade_BiolinkRelation(biolink_relation):
-    """Downgrade BiolinkRelation from 1.0.0 to 0.9.2."""
-    return biolink_relation[8:]
+def downgrade_BiolinkPredicate(biolink_predicate):
+    """Downgrade BiolinkPredicate (1.0.0) to BiolinkRelation (0.9.2)."""
+    return biolink_predicate[8:]
 
 
 def downgrade_Node(node, id_):
     """Downgrade Node from 1.0.0 to 0.9.2."""
     new = {"id": id_}
-    if "category" in node:
+    if node.get("category", None) is not None:
         new["type"] = [
             downgrade_BiolinkEntity(node_type)
             for node_type in ensure_list(node["category"])
         ]
-    if "name" in node:
+    if node.get("name", None) is not None:
         new["name"] = node["name"]
     return new
 
 
 def downgrade_Edge(edge, id_):
     """Downgrade Edge from 1.0.0 to 0.9.2."""
-    return {
+    new = {
         "id": id_,
-        "type": downgrade_BiolinkRelation(edge["predicate"]),
         "source_id": edge["subject"],
         "target_id": edge["object"],
     }
+    if edge.get("predicate", None) is not None:
+        new["type"] = downgrade_BiolinkPredicate(edge["predicate"])
+    if edge.get("relation", None) is not None:
+        new["relation"] = edge["relation"]
+    return new
 
 
 def downgrade_KnowledgeGraph(kgraph):
@@ -51,14 +55,14 @@ def downgrade_KnowledgeGraph(kgraph):
 def downgrade_QNode(qnode, id_):
     """Downgrade QNode from 1.0.0 to 0.9.2."""
     new = {"id": id_}
-    if "category" in qnode:
+    if qnode.get("category", None) is not None:
         if isinstance(qnode["category"], list):
             if len(qnode["category"]) > 1:
                 raise ValueError("QNode with multiple categories is not backwards-compatible")
             new["type"] = downgrade_BiolinkEntity(qnode["category"][0])
         else:
             new["type"] = downgrade_BiolinkEntity(qnode["category"])
-    if "id" in qnode:
+    if qnode.get("id", None) is not None:
         new["curie"] = qnode["id"]
     return new
 
@@ -70,13 +74,15 @@ def downgrade_QEdge(qedge, id_):
         "source_id": qedge["subject"],
         "target_id": qedge["object"],
     }
-    if "predicate" in qedge:
+    if qedge.get("predicate", None) is not None:
         if isinstance(qedge["predicate"], list):
             if len(qedge["predicate"]) > 1:
                 raise ValueError("QEdge with multiple predicates is not backwards-compatible")
-            new["type"] = downgrade_BiolinkRelation(qedge["predicate"][0])
+            new["type"] = downgrade_BiolinkPredicate(qedge["predicate"][0])
         else:
-            new["type"] = downgrade_BiolinkRelation(qedge["predicate"])
+            new["type"] = downgrade_BiolinkPredicate(qedge["predicate"])
+    if qedge.get("relation", None) is not None:
+        new["relation"] = qedge["relation"]
     return new
 
 
@@ -141,14 +147,17 @@ def downgrade_Result(result):
 
 def downgrade_Message(message):
     """Downgrade Message from 1.0.0 to 0.9.2."""
-    return {
-        "query_graph": downgrade_QueryGraph(message["query_graph"]),
-        "knowledge_graph": downgrade_KnowledgeGraph(message["knowledge_graph"]),
-        "results": [
+    new = dict()
+    if message.get("query_graph", None) is not None:
+        new["query_graph"] = downgrade_QueryGraph(message["query_graph"])
+    if message.get("knowledge_graph", None) is not None:
+        new["knowledge_graph"] = downgrade_KnowledgeGraph(message["knowledge_graph"])
+    if message.get("results", None) is not None:
+        new["results"] = [
             downgrade_Result(result)
             for result in message["results"]
-        ],
-    }
+        ]
+    return new
 
 
 def downgrade_Query(query):
