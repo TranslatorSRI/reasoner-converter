@@ -1,8 +1,14 @@
 """Test edge cases."""
 import pytest
 
-from reasoner_converter.upgrading import upgrade_Message, upgrade_Node, upgrade_Edge
-from reasoner_converter.downgrading import downgrade_QNode, downgrade_QEdge
+from reasoner_converter.upgrading import (
+    upgrade_Query, upgrade_Message,
+    upgrade_Node, upgrade_Edge,
+)
+from reasoner_converter.downgrading import (
+    downgrade_Query,
+    downgrade_QNode, downgrade_QEdge,
+)
 
 from .util.validators import validate0, validate1
 
@@ -110,3 +116,18 @@ def test_missing_message_props():
     validate0(x0, "Message")
     x1 = upgrade_Message(x0)
     validate1(x1, "Message")
+
+
+def test_addl_query_props():
+    """Test additional Query properties."""
+    x0a = {
+        "message": {},
+        "a": 1,
+        "b": 2,
+        "c": 3,
+    }
+    validate0(x0a, "Query")
+    x1 = upgrade_Query(x0a)
+    validate1(x1, "Query")
+    x0b = downgrade_Query(x1)
+    assert x0a == x0b

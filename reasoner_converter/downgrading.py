@@ -178,6 +178,8 @@ def downgrade_Message(message):
 
 def downgrade_Query(query):
     """Downgrade Query from 1.0.0 to 0.9.2."""
+    query = {**query}
     return {
-        "message": downgrade_Message(query["message"]),
+        "message": downgrade_Message(query.pop("message")),
+        **query,
     }
