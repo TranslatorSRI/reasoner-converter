@@ -70,35 +70,49 @@ def downgrade_KnowledgeGraph(kgraph):
 
 def downgrade_QNode(qnode, id_):
     """Downgrade QNode from 1.0.0 to 0.9.2."""
+    qnode = {**qnode}
     new = {"id": id_}
-    if qnode.get("category", None) is not None:
-        if isinstance(qnode["category"], list):
-            if len(qnode["category"]) > 1:
+    category = qnode.pop("category", None)
+    if category is not None:
+        if isinstance(category, list):
+            if len(category) > 1:
                 raise ValueError("QNode with multiple categories is not backwards-compatible")
-            new["type"] = downgrade_BiolinkEntity(qnode["category"][0])
+            new["type"] = downgrade_BiolinkEntity(category[0])
         else:
-            new["type"] = downgrade_BiolinkEntity(qnode["category"])
-    if qnode.get("id", None) is not None:
-        new["curie"] = qnode["id"]
+            new["type"] = downgrade_BiolinkEntity(category)
+    curie = qnode.pop("id", None)
+    if curie is not None:
+        new["curie"] = curie
+    new = {
+        **new,
+        **qnode,
+    }
     return new
 
 
 def downgrade_QEdge(qedge, id_):
     """Downgrade QEdge from 1.0.0 to 0.9.2."""
+    qedge = {**qedge}
     new = {
         "id": id_,
-        "source_id": qedge["subject"],
-        "target_id": qedge["object"],
+        "source_id": qedge.pop("subject"),
+        "target_id": qedge.pop("object"),
     }
-    if qedge.get("predicate", None) is not None:
-        if isinstance(qedge["predicate"], list):
-            if len(qedge["predicate"]) > 1:
+    predicate = qedge.pop("predicate", None)
+    if predicate is not None:
+        if isinstance(predicate, list):
+            if len(predicate) > 1:
                 raise ValueError("QEdge with multiple predicates is not backwards-compatible")
-            new["type"] = downgrade_BiolinkPredicate(qedge["predicate"][0])
+            new["type"] = downgrade_BiolinkPredicate(predicate[0])
         else:
-            new["type"] = downgrade_BiolinkPredicate(qedge["predicate"])
-    if qedge.get("relation", None) is not None:
-        new["relation"] = qedge["relation"]
+            new["type"] = downgrade_BiolinkPredicate(predicate)
+    relation = qedge.pop("relation", None)
+    if relation is not None:
+        new["relation"] = relation
+    new = {
+        **new,
+        **qedge,
+    }
     return new
 
 
