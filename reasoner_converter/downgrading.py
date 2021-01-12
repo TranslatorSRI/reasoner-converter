@@ -144,20 +144,25 @@ def downgrade_EdgeBinding(edge_binding, qg_id):
 
 def downgrade_Result(result):
     """Downgrade Result from 1.0.0 to 0.9.2."""
+    result = {**result}
     new = {
         "node_bindings": [],
         "edge_bindings": [],
     }
-    for qg_id, nbs in result["node_bindings"].items():
+    for qg_id, nbs in result.pop("node_bindings").items():
         new["node_bindings"].extend(
             downgrade_NodeBinding(nb, qg_id)
             for nb in nbs
         )
-    for qg_id, ebs in result["edge_bindings"].items():
+    for qg_id, ebs in result.pop("edge_bindings").items():
         new["edge_bindings"].extend(
             downgrade_EdgeBinding(eb, qg_id)
             for eb in ebs
-        ) 
+        )
+    new = {
+        **new,
+        **result,
+    }
     return new
 
 
