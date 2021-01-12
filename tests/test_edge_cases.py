@@ -4,6 +4,7 @@ import pytest
 from reasoner_converter.upgrading import (
     upgrade_Query, upgrade_Message,
     upgrade_Node, upgrade_Edge,
+    upgrade_QNode, upgrade_QEdge,
     upgrade_Result,
 )
 from reasoner_converter.downgrading import (
@@ -186,3 +187,33 @@ def test_addl_result_props():
     validate1(x1, "Result")
     x0b = downgrade_Result(x1)
     assert x0 == x0b
+
+
+def test_addl_qnode_props():
+    """Test additional QNode properties."""
+    x0a = {
+        "id": "n0",
+        "a": 1,
+        "b": 2,
+    }
+    validate0(x0a, "QNode")
+    x1 = upgrade_QNode(x0a)
+    validate1(x1, "QNode")
+    x0b = downgrade_QNode(x1, "n0")
+    assert x0a == x0b
+
+
+def test_addl_qedge_props():
+    """Test additional QEdge properties."""
+    x0a = {
+        "id": "e01",
+        "source_id": "n0",
+        "target_id": "n1",
+        "a": 1,
+        "b": 2,
+    }
+    validate0(x0a, "QEdge")
+    x1 = upgrade_QEdge(x0a)
+    validate1(x1, "QEdge")
+    x0b = downgrade_QEdge(x1, "e01")
+    assert x0a == x0b
