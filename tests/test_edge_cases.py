@@ -164,3 +164,35 @@ def test_addl_binding_props():
             }],
         }
     }
+
+
+def test_addl_result_props():
+    """Test additional Result properties."""
+    x0 = {
+        "node_bindings": [{
+            "qg_id": "n0",
+            "kg_id": "XXX:YYY",
+        }],
+        "edge_bindings": [{
+            "qg_id": "e01",
+            "kg_id": "xxx",
+        }],
+        "a": 1,
+        "b": 2,
+    }
+    validate0(x0, "Result")
+    x1 = upgrade_Result(x0)
+    assert x1 == {
+        "node_bindings": {
+            "n0": [{
+                "id": "XXX:YYY",
+            }],
+        },
+        "edge_bindings": {
+            "e01": [{
+                "id": "xxx",
+            }],
+        },
+        "a": 1,
+        "b": 2,
+    }
