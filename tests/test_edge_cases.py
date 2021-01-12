@@ -9,6 +9,7 @@ from reasoner_converter.upgrading import (
 from reasoner_converter.downgrading import (
     downgrade_Query,
     downgrade_QNode, downgrade_QEdge,
+    downgrade_Result,
 )
 
 from .util.validators import validate0, validate1
@@ -164,3 +165,24 @@ def test_addl_binding_props():
             }],
         }
     }
+
+
+def test_addl_result_props():
+    """Test additional Result properties."""
+    x0 = {
+        "node_bindings": [{
+            "qg_id": "n0",
+            "kg_id": "XXX:YYY",
+        }],
+        "edge_bindings": [{
+            "qg_id": "e01",
+            "kg_id": "xxx",
+        }],
+        "a": 1,
+        "b": 2,
+    }
+    validate0(x0, "Result")
+    x1 = upgrade_Result(x0)
+    validate1(x1, "Result")
+    x0b = downgrade_Result(x1)
+    assert x0 == x0b

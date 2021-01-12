@@ -163,18 +163,23 @@ def upgrade_EdgeBinding(edge_binding):
 
 def upgrade_Result(result):
     """Upgrade Result from 0.9.2 to 1.0.0."""
+    result = {**result}
     new = {
         "node_bindings": defaultdict(list),
         "edge_bindings": defaultdict(list),
     }
-    for node_binding in result["node_bindings"]:
+    for node_binding in result.pop("node_bindings"):
         new["node_bindings"][node_binding["qg_id"]].extend(
             upgrade_NodeBinding(node_binding)
         )
-    for edge_binding in result["edge_bindings"]:
+    for edge_binding in result.pop("edge_bindings"):
         new["edge_bindings"][edge_binding["qg_id"]].extend(
             upgrade_EdgeBinding(edge_binding)
-        ) 
+        )
+    new = {
+        **new,
+        **result,
+    }
     return new
 
 
